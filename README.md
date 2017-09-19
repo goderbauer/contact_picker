@@ -1,5 +1,7 @@
 # ContactPicker plugin for Flutter
 
+[![pub package](https://img.shields.io/pub/v/contact_picker.svg)](https://pub.dartlang.org/packages/contact_picker)
+
 With this plugin a Flutter app can ask its user to select a contact from his/her address book. The information associated with the contact is returned to the app.
 
 This plugin uses the operating system's native UI for selection contacts and does not require any special permissions from the user.
