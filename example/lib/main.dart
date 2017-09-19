@@ -25,17 +25,19 @@ class _MyAppState extends State<MyApp> {
           child: new Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-                new MaterialButton(
-                  color: Colors.blue,
-                  child: new Text("CLICK ME"),
-                  onPressed: () async {
-                    Contact contact = await _contactPicker.selectContact();
-                    setState(() {
-                      _contact = contact;
-                    });
-                  },
-                ),
-              new Text(_contact == null ? 'No contact selected.' : _contact.toString()),
+              new MaterialButton(
+                color: Colors.blue,
+                child: new Text("CLICK ME"),
+                onPressed: () async {
+                  Contact contact = await _contactPicker.selectContact();
+                  setState(() {
+                    _contact = contact;
+                  });
+                },
+              ),
+              new Text(
+                _contact == null ? 'No contact selected.' : _contact.toString(),
+              ),
             ],
           ),
         ),

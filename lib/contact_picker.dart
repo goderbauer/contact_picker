@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 /// Entry point for the ContactPicker plugin.
-/// 
+///
 /// Call [selectContact] to bring up a dialog where the user can pick a contact
 /// from his/her address book.
 class ContactPicker {
@@ -11,11 +11,12 @@ class ContactPicker {
 
   /// Brings up a dialog where the user can select a contact from his/her
   /// address book.
-  /// 
+  ///
   /// Returns the [Contact] selected by the user, or `null` if the user canceled
   /// out of the dialog.
   Future<Contact> selectContact() async {
-    Map<String, dynamic> result = await _channel.invokeMethod('selectContact');
+    final Map<String, dynamic> result =
+        await _channel.invokeMethod('selectContact');
     if (result == null) {
       return null;
     }
@@ -27,11 +28,9 @@ class ContactPicker {
 class Contact {
   Contact({this.fullName, this.phoneNumber});
 
-  factory Contact.fromMap(Map<String, dynamic> map) {
-    return new Contact(
-        fullName: map['fullName'],
-        phoneNumber: new PhoneNumber.fromMap(map['phoneNumber']));
-  }
+  factory Contact.fromMap(Map<String, dynamic> map) => new Contact(
+      fullName: map['fullName'],
+      phoneNumber: new PhoneNumber.fromMap(map['phoneNumber']));
 
   /// The full name of the contact, e.g. "Dr. Daniel Higgens Jr.".
   final String fullName;
