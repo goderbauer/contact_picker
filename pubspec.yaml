@@ -1,6 +1,6 @@
 name: contact_picker
 description: A Flutter plugin for picking a contact from the address book.
-version: 0.0.1+1
+version: 0.0.1+2
 author: Michael Goderbauer <michael@goderbauer.net>
 homepage: https://github.com/goderbauer/contact_picker
 
