@@ -1,0 +1,17 @@
+name: contact_picker_example
+description: Demonstrates how to use the contact_picker plugin.
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  contact_picker:
+    path: ../
+
+flutter:
+  uses-material-design: true
+  
