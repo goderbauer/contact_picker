@@ -59,29 +59,32 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
     if (requestCode != PICK_CONTACT) {
       return false;
     }
-    if (resultCode != RESULT_OK) {
+    if (resultCode != RESULT_OK || data == null || data.getData() == null) {
       pendingResult.success(null);
-      pendingResult = null;
+    } else {
+
+      Uri contactUri = data.getData();
+
+      Cursor cursor = activity.getContentResolver().query(contactUri, null, null, null, null);
+      cursor.moveToFirst();
+
+      int phoneType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+      String customLabel = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
+      String label = (String) ContactsContract.CommonDataKinds.Email.getTypeLabel(activity.getResources(), phoneType, customLabel);
+      String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+      String fullName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+      HashMap<String, Object> phoneNumber = new HashMap<>();
+      phoneNumber.put("number", number);
+      phoneNumber.put("label", label);
+
+      HashMap<String, Object> contact = new HashMap<>();
+      contact.put("fullName", fullName);
+      contact.put("phoneNumber", phoneNumber);
+
+      pendingResult.success(contact);
     }
-    Uri contactUri = data.getData();
-    Cursor cursor = activity.getContentResolver().query(contactUri, null, null, null, null);
-    cursor.moveToFirst();
 
-    int phoneType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-    String customLabel = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
-    String label = (String) ContactsContract.CommonDataKinds.Email.getTypeLabel(activity.getResources(), phoneType, customLabel);
-    String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-    String fullName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-    HashMap<String, Object> phoneNumber = new HashMap<>();
-    phoneNumber.put("number", number);
-    phoneNumber.put("label", label);
-
-    HashMap<String, Object> contact = new HashMap<>();
-    contact.put("fullName", fullName);
-    contact.put("phoneNumber", phoneNumber);
-
-    pendingResult.success(contact);
     pendingResult = null;
     return true;
   }
