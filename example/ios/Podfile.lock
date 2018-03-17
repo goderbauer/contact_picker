@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: /Users/goderbauer/dev/flutter/bin/cache/artifacts/engine/ios
 
 SPEC CHECKSUMS:
-  contact_picker: 57db5d8b410b52a0457d88f7b15de7d3307e8f16
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+  contact_picker: e5ff7027200ed490ac2b58a2338f81f79b05fe4f
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
 
 PODFILE CHECKSUM: 351e02e34b831289961ec3558a535cbd2c4965d2
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.4.0
