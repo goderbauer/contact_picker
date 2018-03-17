@@ -62,6 +62,7 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
     if (resultCode != RESULT_OK) {
       pendingResult.success(null);
       pendingResult = null;
+      return true;
     }
     Uri contactUri = data.getData();
     Cursor cursor = activity.getContentResolver().query(contactUri, null, null, null, null);
