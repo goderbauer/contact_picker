@@ -19,7 +19,7 @@ class ContactPicker {
   /// Returns the [Contact] selected by the user, or `null` if the user canceled
   /// out of the dialog.
   Future<Contact> selectContact() async {
-    final Map<String, dynamic> result =
+    final Map<dynamic, dynamic> result =
         await _channel.invokeMethod('selectContact');
     if (result == null) {
       return null;
@@ -32,7 +32,7 @@ class ContactPicker {
 class Contact {
   Contact({this.fullName, this.phoneNumber});
 
-  factory Contact.fromMap(Map<String, dynamic> map) => new Contact(
+  factory Contact.fromMap(Map<dynamic, dynamic> map) => new Contact(
       fullName: map['fullName'],
       phoneNumber: new PhoneNumber.fromMap(map['phoneNumber']));
 
@@ -50,7 +50,7 @@ class Contact {
 class PhoneNumber {
   PhoneNumber({this.number, this.label});
 
-  factory PhoneNumber.fromMap(Map<String, dynamic> map) =>
+  factory PhoneNumber.fromMap(Map<dynamic, dynamic> map) =>
       new PhoneNumber(number: map['number'], label: map['label']);
 
   /// The formatted phone number, e.g. "+1 (555) 555-5555"
