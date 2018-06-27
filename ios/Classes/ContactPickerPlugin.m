@@ -9,55 +9,102 @@
 @end
 
 @implementation ContactPickerPlugin {
-  FlutterResult _result;
+    FlutterResult _result;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"contact_picker"
-                                  binaryMessenger:[registrar messenger]];
-  ContactPickerPlugin *instance = [[ContactPickerPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+    FlutterMethodChannel *channel =
+    [FlutterMethodChannel methodChannelWithName:@"contact_picker"
+                                binaryMessenger:[registrar messenger]];
+    ContactPickerPlugin *instance = [[ContactPickerPlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"selectContact" isEqualToString:call.method]) {
-    if (_result) {
-      _result([FlutterError errorWithCode:@"multiple_requests"
-                                  message:@"Cancelled by a second request."
-                                  details:nil]);
-      _result = nil;
-    }
-    _result = result;
-
-    CNContactPickerViewController *contactPicker = [[CNContactPickerViewController alloc] init];
-    contactPicker.delegate = self;
-    contactPicker.displayedPropertyKeys = @[ CNContactPhoneNumbersKey ];
-
-    UIViewController *viewController =
+    if ([@"selectContact" isEqualToString:call.method]) {
+        if (_result) {
+            _result([FlutterError errorWithCode:@"multiple_requests"
+                                        message:@"Cancelled by a second request."
+                                        details:nil]);
+            _result = nil;
+        }
+        _result = result;
+        
+        CNContactPickerViewController *contactPicker = [[CNContactPickerViewController alloc] init];
+        contactPicker.delegate = self;
+//        contactPicker.displayedPropertyKeys = @[ CNContactPhoneNumbersKey ];
+        
+        UIViewController *viewController =
         [UIApplication sharedApplication].delegate.window.rootViewController;
-    [viewController presentViewController:contactPicker animated:YES completion:nil];
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
+        [viewController presentViewController:contactPicker animated:YES completion:nil];
+    } else {
+        result(FlutterMethodNotImplemented);
+    }
 }
 
-- (void)contactPicker:(CNContactPickerViewController *)picker
-    didSelectContactProperty:(CNContactProperty *)contactProperty {
-  NSString *fullName = [CNContactFormatter stringFromContact:contactProperty.contact
-                                                       style:CNContactFormatterStyleFullName];
-  NSDictionary *phoneNumber = [NSDictionary
-      dictionaryWithObjectsAndKeys:[contactProperty.value stringValue], @"number",
-                                   [CNLabeledValue localizedStringForLabel:contactProperty.label],
-                                   @"label", nil];
-  _result([NSDictionary
-      dictionaryWithObjectsAndKeys:fullName, @"fullName", phoneNumber, @"phoneNumber", nil]);
-  _result = nil;
+- (void)contactPicker:(CNContactPickerViewController *)picker didSelectContact:(CNContact *)contact {
+    NSString *fullName = [CNContactFormatter stringFromContact:contact
+                                                         style:CNContactFormatterStyleFullName];
+    
+    NSMutableArray *emails = [NSMutableArray array];
+    NSMutableArray *phones = [NSMutableArray array];
+    NSMutableArray *addresses = [NSMutableArray array];
+    NSMutableArray *ims = [NSMutableArray array];
+    
+    for (CNLabeledValue<NSString*> * email in contact.emailAddresses) {
+        [emails addObject:@{ @"label": [CNLabeledValue localizedStringForLabel: email.label],
+                             @"email": email.value }];
+    }
+    
+    for (CNLabeledValue<CNPhoneNumber*> * phone in contact.phoneNumbers) {
+        [phones addObject:@{ @"label": [CNLabeledValue localizedStringForLabel: phone.label],
+                             @"phone": phone.value.stringValue }];
+    }
+    
+    for (CNLabeledValue<CNInstantMessageAddress*> * im in contact.instantMessageAddresses) {
+        [ims addObject:@{ @"label": [CNLabeledValue localizedStringForLabel: im.label],
+                             @"im": im.value.username,
+                             @"protocol": im.value.service
+                             }];
+    }
+    for (CNLabeledValue<CNPostalAddress*> * address in contact.postalAddresses) {
+        if (@available(iOS 10.3, *)) {
+            [addresses addObject:@{ @"label": [CNLabeledValue localizedStringForLabel: address.label],
+                              @"street": address.value.street,
+                              @"neighborhood": address.value.subLocality,
+                              @"city": address.value.city,
+                              @"region": address.value.subAdministrativeArea,
+                              @"state": address.value.state,
+                              @"postcode": address.value.postalCode,
+                              @"country": address.value.country
+                              }];
+        } else {
+            [addresses addObject:@{ @"label": [CNLabeledValue localizedStringForLabel: address.label],
+                              @"street": address.value.street,
+                              @"city": address.value.city,
+                              @"state": address.value.state,
+                              @"postcode": address.value.postalCode,
+                              @"country": address.value.country
+                              }];
+        }
+    }
+    
+    if (!fullName) {
+        fullName = [emails.firstObject valueForKeyPath:@"email"];
+    }
+    if (!fullName) {
+        fullName = [phones.firstObject valueForKeyPath:@"phone"];
+    }
+
+    _result(@{ @"fullName": fullName, @"emails": emails, @"phones": phones, @"addresses": addresses, @"ims": ims });
+    _result = nil;
+
+    NSLog(@"contact: %@", contact);
 }
 
 - (void)contactPickerDidCancel:(CNContactPickerViewController *)picker {
-  _result(nil);
-  _result = nil;
+    _result(nil);
+    _result = nil;
 }
 
 @end

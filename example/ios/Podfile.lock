@@ -2,21 +2,27 @@ PODS:
   - contact_picker (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - simple_permissions (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
-  - contact_picker (from `/Users/goderbauer/dev/contact_picker/ios`)
-  - Flutter (from `/Users/goderbauer/dev/flutter/bin/cache/artifacts/engine/ios`)
+  - contact_picker (from `.symlinks/plugins/contact_picker/ios`)
+  - Flutter (from `.symlinks/flutter/ios`)
+  - simple_permissions (from `.symlinks/plugins/simple_permissions/ios`)
 
 EXTERNAL SOURCES:
   contact_picker:
-    :path: /Users/goderbauer/dev/contact_picker/ios
+    :path: ".symlinks/plugins/contact_picker/ios"
   Flutter:
-    :path: /Users/goderbauer/dev/flutter/bin/cache/artifacts/engine/ios
+    :path: ".symlinks/flutter/ios"
+  simple_permissions:
+    :path: ".symlinks/plugins/simple_permissions/ios"
 
 SPEC CHECKSUMS:
   contact_picker: e5ff7027200ed490ac2b58a2338f81f79b05fe4f
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  simple_permissions: 7b655133eecb5dd18d5f0326e847c46f8d440576
 
-PODFILE CHECKSUM: 351e02e34b831289961ec3558a535cbd2c4965d2
+PODFILE CHECKSUM: c19a5e24ea5505fc3a2a4f3c1e1112339b1f4411
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3
