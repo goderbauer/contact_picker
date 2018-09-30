@@ -57,17 +57,13 @@
 
 - (void)contactPicker:(CNContactPickerViewController *)picker didSelectContact:(CNContact *)contact  {
     
-    printf("didSelectContact Called!");
     NSString * firstName = contact.givenName;
     NSString * lastName  = contact.familyName;
     
-    //Am sure there is a better way to append a space.
-    NSString *space = @" ";
-    NSString *fullNameStr= [firstName  stringByAppendingString:space ];
-    fullNameStr = [fullNameStr stringByAppendingString:lastName ];
+    NSString *fullNameStr= [NSString stringWithFormat:@"%@ %@", firstName,lastName];
     
-    //Since we dont really care about which phone number it is, just seelct the first one and call it home
-    // CNLabeledValue *phoneNumberValue = contact.phoneNumbers[0].value;
+    //Since we only need a phone number and dont really need the associated label, just select the first one and call it home
+    //CNLabeledValue *phoneNumberValue = contact.phoneNumbers[0].value;
     NSString *label = @"Home";
     
     NSDictionary *phoneNumber = [NSDictionary
@@ -78,6 +74,7 @@
              dictionaryWithObjectsAndKeys:fullNameStr, @"fullName",  phoneNumber, @"phoneNumber", nil]);
     _result = nil;
 }
+
 - (void)contactPickerDidCancel:(CNContactPickerViewController *)picker {
   _result(nil);
   _result = nil;
