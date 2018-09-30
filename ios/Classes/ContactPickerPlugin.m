@@ -62,14 +62,14 @@
     
     NSString *fullNameStr= [NSString stringWithFormat:@"%@ %@", firstName,lastName];
     
-    //Since we only need a phone number and dont really need the associated label, just select the first one and call it home
-    //CNLabeledValue *phoneNumberValue = contact.phoneNumbers[0].value;
-    NSString *label = @"Home";
+    NSDictionary *phoneNumber = nil;
+    if(contact.phoneNumbers && contact.phoneNumbers.count > 0) {
+        phoneNumber  = [NSDictionary
+                        dictionaryWithObjectsAndKeys:[contact.phoneNumbers[0].value stringValue], @"number",
+                        [CNLabeledValue localizedStringForLabel:contact.phoneNumbers[0].label],
+                        @"label", nil];
+    }
     
-    NSDictionary *phoneNumber = [NSDictionary
-                                 dictionaryWithObjectsAndKeys:[contact.phoneNumbers[0].value stringValue], @"number",
-                                 label,
-                                 @"label", nil];
     _result([NSDictionary
              dictionaryWithObjectsAndKeys:fullNameStr, @"fullName",  phoneNumber, @"phoneNumber", nil]);
     _result = nil;
