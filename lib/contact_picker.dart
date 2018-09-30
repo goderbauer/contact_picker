@@ -19,8 +19,19 @@ class ContactPicker {
   /// Returns the [Contact] selected by the user, or `null` if the user canceled
   /// out of the dialog.
   Future<Contact> selectContact() async {
+    return doSelect('phone');
+  }
+
+  Future<Contact> selectContactName() async {
+    return doSelect('contact');
+  }
+
+  Future<Contact> doSelect(String type) async {
+    final Map<String, dynamic> params = <String, dynamic> {
+      'type': type,
+    };
     final Map<dynamic, dynamic> result =
-        await _channel.invokeMethod('selectContact');
+        await _channel.invokeMethod('selectContact', params);
     if (result == null) {
       return null;
     }
