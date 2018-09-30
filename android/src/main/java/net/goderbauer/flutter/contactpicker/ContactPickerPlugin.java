@@ -40,6 +40,7 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
+    Uri intentUri;
     if (call.method.equals("selectContact")) {
       if (pendingResult != null) {
         pendingResult.error("multiple_requests", "Cancelled by a second request.", null);
@@ -47,7 +48,22 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
       }
       pendingResult = result;
 
-      Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+      String requestType = "contacts";
+      if (call.hasArgument("type")) {
+        requestType = call.argument("type");
+      }
+
+      switch (requestType) {
+        case "phone":
+          intentUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+          break;
+        case "contacts":
+        default:
+          intentUri = ContactsContract.Contacts.CONTENT_URI;
+          break;
+      }
+
+      Intent i = new Intent(Intent.ACTION_PICK, intentUri);
       activity.startActivityForResult(i, PICK_CONTACT);
     } else {
       result.notImplemented();
@@ -68,17 +84,20 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
     Cursor cursor = activity.getContentResolver().query(contactUri, null, null, null, null);
     cursor.moveToFirst();
 
-    int phoneType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-    String customLabel = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
-    String label = (String) ContactsContract.CommonDataKinds.Email.getTypeLabel(activity.getResources(), phoneType, customLabel);
-    String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+    HashMap<String, Object> phoneNumber = new HashMap<>();
+    HashMap<String, Object> contact = new HashMap<>();
+
+    int phoneTypeIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+    if (phoneTypeIndex != -1) {
+      int phoneType = cursor.getInt(phoneTypeIndex);
+      String customLabel = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
+      String label = (String) ContactsContract.CommonDataKinds.Email.getTypeLabel(activity.getResources(), phoneType, customLabel);
+      String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+      phoneNumber.put("number", number);
+      phoneNumber.put("label", label);
+    }
     String fullName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-    HashMap<String, Object> phoneNumber = new HashMap<>();
-    phoneNumber.put("number", number);
-    phoneNumber.put("label", label);
-
-    HashMap<String, Object> contact = new HashMap<>();
     contact.put("fullName", fullName);
     contact.put("phoneNumber", phoneNumber);
 
