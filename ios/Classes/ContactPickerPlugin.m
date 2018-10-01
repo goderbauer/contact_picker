@@ -55,26 +55,6 @@
   _result = nil;
 }
 
-- (void)contactPicker:(CNContactPickerViewController *)picker didSelectContact:(CNContact *)contact  {
-    
-    NSString * firstName = contact.givenName;
-    NSString * lastName  = contact.familyName;
-    
-    NSString *fullNameStr= [NSString stringWithFormat:@"%@ %@", firstName,lastName];
-    
-    NSDictionary *phoneNumber = nil;
-    if(contact.phoneNumbers && contact.phoneNumbers.count > 0) {
-        phoneNumber  = [NSDictionary
-                        dictionaryWithObjectsAndKeys:[contact.phoneNumbers[0].value stringValue], @"number",
-                        [CNLabeledValue localizedStringForLabel:contact.phoneNumbers[0].label],
-                        @"label", nil];
-    }
-    
-    _result([NSDictionary
-             dictionaryWithObjectsAndKeys:fullNameStr, @"fullName",  phoneNumber, @"phoneNumber", nil]);
-    _result = nil;
-}
-
 - (void)contactPickerDidCancel:(CNContactPickerViewController *)picker {
   _result(nil);
   _result = nil;
