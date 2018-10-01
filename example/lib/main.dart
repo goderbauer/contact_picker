@@ -31,9 +31,19 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               new MaterialButton(
                 color: Colors.blue,
-                child: new Text("CLICK ME"),
+                child: new Text("Phone"),
                 onPressed: () async {
                   Contact contact = await _contactPicker.selectContact();
+                  setState(() {
+                    _contact = contact;
+                  });
+                },
+              ),
+              new MaterialButton(
+                color: Colors.blue,
+                child: new Text("Contact"),
+                onPressed: () async {
+                  Contact contact = await _contactPicker.selectContactName();
                   setState(() {
                     _contact = contact;
                   });
