@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -41,14 +42,13 @@ public class ContactPickerPlugin implements MethodCallHandler, PluginRegistry.Ac
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     if (call.method.equals("selectContact")) {
-      if (pendingResult != null) {
-        pendingResult.error("multiple_requests", "Cancelled by a second request.", null);
-        pendingResult = null;
+      if (pendingResult == null) {
+        pendingResult = result;
+        Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+        activity.startActivityForResult(i, PICK_CONTACT);
+      } else {
+        Log.v("ContactPickerPlugin", "Multiple requests may have been made");
       }
-      pendingResult = result;
-
-      Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
-      activity.startActivityForResult(i, PICK_CONTACT);
     } else {
       result.notImplemented();
     }
