@@ -1,3 +1,2 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="net.goderbauer.flutter.contactpicker">
+<manifest package="net.goderbauer.flutter.contactpicker">
 </manifest>

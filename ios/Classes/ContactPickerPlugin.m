@@ -1,63 +1,15 @@
-// Copyright 2017 Michael Goderbauer. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 #import "ContactPickerPlugin.h"
-@import ContactsUI;
+#if __has_include(<contact_picker/contact_picker-Swift.h>)
+#import <contact_picker/contact_picker-Swift.h>
+#else
+// Support project import fallback if the generated compatibility header
+// is not copied when this plugin is created as a library.
+// https://forums.swift.org/t/swift-static-libraries-dont-copy-generated-objective-c-header/19816
+#import "contact_picker-Swift.h"
+#endif
 
-@interface ContactPickerPlugin ()<CNContactPickerDelegate>
-@end
-
-@implementation ContactPickerPlugin {
-  FlutterResult _result;
+@implementation ContactPickerPlugin
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+    [SwiftContactPickerPlugin registerWithRegistrar:registrar];
 }
-
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"contact_picker"
-                                  binaryMessenger:[registrar messenger]];
-  ContactPickerPlugin *instance = [[ContactPickerPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
-}
-
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"selectContact" isEqualToString:call.method]) {
-    if (_result) {
-      _result([FlutterError errorWithCode:@"multiple_requests"
-                                  message:@"Cancelled by a second request."
-                                  details:nil]);
-      _result = nil;
-    }
-    _result = result;
-
-    CNContactPickerViewController *contactPicker = [[CNContactPickerViewController alloc] init];
-    contactPicker.delegate = self;
-    contactPicker.displayedPropertyKeys = @[ CNContactPhoneNumbersKey ];
-
-    UIViewController *viewController =
-        [UIApplication sharedApplication].delegate.window.rootViewController;
-    [viewController presentViewController:contactPicker animated:YES completion:nil];
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
-- (void)contactPicker:(CNContactPickerViewController *)picker
-    didSelectContactProperty:(CNContactProperty *)contactProperty {
-  NSString *fullName = [CNContactFormatter stringFromContact:contactProperty.contact
-                                                       style:CNContactFormatterStyleFullName];
-  NSDictionary *phoneNumber = [NSDictionary
-      dictionaryWithObjectsAndKeys:[contactProperty.value stringValue], @"number",
-                                   [CNLabeledValue localizedStringForLabel:contactProperty.label],
-                                   @"label", nil];
-  _result([NSDictionary
-      dictionaryWithObjectsAndKeys:fullName, @"fullName", phoneNumber, @"phoneNumber", nil]);
-  _result = nil;
-}
-
-- (void)contactPickerDidCancel:(CNContactPickerViewController *)picker {
-  _result(nil);
-  _result = nil;
-}
-
 @end

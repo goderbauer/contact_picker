@@ -24,41 +24,24 @@ class ContactPicker {
     if (result == null) {
       return null;
     }
-    return new Contact.fromMap(result);
+    return Contact.fromMap(result);
   }
 }
 
 /// Represents a contact selected by the user.
 class Contact {
-  Contact({this.fullName, this.phoneNumber});
+  Contact({this.fullName, this.phoneNumbers});
 
-  factory Contact.fromMap(Map<dynamic, dynamic> map) => new Contact(
+  factory Contact.fromMap(Map<dynamic, dynamic> map) => Contact(
       fullName: map['fullName'],
-      phoneNumber: new PhoneNumber.fromMap(map['phoneNumber']));
+      phoneNumbers: map['phoneNumbers'].cast<String>());
 
   /// The full name of the contact, e.g. "Dr. Daniel Higgens Jr.".
   final String fullName;
 
-  /// The phone number of the contact.
-  final PhoneNumber phoneNumber;
-
-  @override
-  String toString() => '$fullName: $phoneNumber';
-}
-
-/// Represents a phone number selected by the user.
-class PhoneNumber {
-  PhoneNumber({this.number, this.label});
-
-  factory PhoneNumber.fromMap(Map<dynamic, dynamic> map) =>
-      new PhoneNumber(number: map['number'], label: map['label']);
-
   /// The formatted phone number, e.g. "+1 (555) 555-5555"
-  final String number;
-
-  /// The label associated with the phone number, e.g. "home" or "work".
-  final String label;
+  final List<String> phoneNumbers;
 
   @override
-  String toString() => '$number ($label)';
+  String toString() => '$fullName: $phoneNumbers';
 }
