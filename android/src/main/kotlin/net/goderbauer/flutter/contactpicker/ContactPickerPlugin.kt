@@ -77,7 +77,7 @@ class ContactPickerPlugin: FlutterPlugin, MethodCallHandler,
     this.activity = null
   }
 
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     if (requestCode != PICK_CONTACT) {
       return false
     }
@@ -87,7 +87,7 @@ class ContactPickerPlugin: FlutterPlugin, MethodCallHandler,
       return true
     }
 
-    data.data?.let { contactUri ->
+    data?.data?.let { contactUri ->
       val cursor = activity!!.contentResolver.query(contactUri, null, null, null, null)
       cursor?.use{
         it.moveToFirst()
